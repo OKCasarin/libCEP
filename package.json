@@ -1,0 +1,28 @@
+{
+  "name": "libcep",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Package to get address info by a brazilian zipcode",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/OKCasarin/libCEP.git"
+  },
+  "keywords": [
+    "address",
+    "zipcode"
+  ],
+  "author": "OKCasarin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OKCasarin/libCEP/issues"
+  },
+  "homepage": "https://github.com/OKCasarin/libCEP#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "joi": "^17.6.0"
+  }
+}
