@@ -7,7 +7,7 @@ import {
     ErrorZipCodeNotFound
 } from '../../repositories/libCEP/errors.js'
 
-function libCEP ({ repositories }) {
+function libCEP ({ services }) {
 
     const schema = Joi.object({
         zipcode: Joi.string().length(8),
@@ -19,7 +19,7 @@ function libCEP ({ repositories }) {
             const { error: validationError } = schema.validate({zipcode, format});
             if (validationError) throw new ErrorInvalidRequest(validationError.details);
             
-            const address = await repositories.getAddressByZipcode({zipcode, format});
+            const address = await services.createCEP({zipcode, format});
 
             return address;
         }
