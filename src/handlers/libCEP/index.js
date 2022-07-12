@@ -1,38 +1,36 @@
-import Joi from "joi";
+import Joi from 'joi';
 import {
-    ErrorInvalidRequest,
-    ErrorDefault
-} from './errors.js';
+  ErrorInvalidRequest,
+  ErrorDefault,
+} from './errors';
 import {
-    ErrorZipCodeNotFound
-} from '../../repositories/libCEP/errors.js'
+  ErrorZipCodeNotFound,
+} from '../../repositories/libCEP/errors';
 
-function libCEP ({ services }) {
+function libCEP({ services }) {
+  const schema = Joi.object({
+    zipcode: Joi.string().length(8),
+    format: Joi.string(),
+  });
 
-    const schema = Joi.object({
-        zipcode: Joi.string().length(8),
-        format: Joi.string()
-    })
+  async function getAddressByZipcode(zipcode = '', format = 'json') {
+    try {
+      const { error: validationError } = schema.validate({ zipcode, format });
+      if (validationError) throw new ErrorInvalidRequest(validationError.details);
 
-    async function getAddressByZipcode (zipcode='', format='json') {
-        try {
-            const { error: validationError } = schema.validate({zipcode, format});
-            if (validationError) throw new ErrorInvalidRequest(validationError.details);
-            
-            const address = await services.createCEP({zipcode, format});
+      const address = await services.createCEP({ zipcode, format });
 
-            return address;
-        }
-        catch (err) {
-            if (err instanceof ErrorInvalidRequest) throw err;
+      return address;
+    } catch (err) {
+      if (err instanceof ErrorInvalidRequest) throw err;
 
-            if (err instanceof ErrorZipCodeNotFound) throw err;
+      if (err instanceof ErrorZipCodeNotFound) throw err;
 
-            throw new ErrorDefault();
-        }
+      throw new ErrorDefault();
     }
+  }
 
-    return {getAddressByZipcode}
+  return { getAddressByZipcode };
 }
 
 export default libCEP;

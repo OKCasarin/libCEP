@@ -1,48 +1,46 @@
+function libCEP({ repositories }) {
+  let cepSchema = {
+    uf: '',
+    city: '',
+    neighbourhood: '',
+    street: '',
+    complement: '',
+  };
 
-function libCEP ( {repositories} ) {
+  const required = /([A-Z])\w+/;
 
-    let cepSchema = {
-        uf: '',
-        city: '',
-        neighbourhood: '',
-        street: '',
-        complement: ''
+  const cepValidations = [
+    { field: 'uf', validation: /\d{5}-\d{3}/ },
+    { field: 'city', validation: required },
+    { field: 'neighbourhood', validation: required },
+    { field: 'street', validation: required },
+  ];
+
+  function parseCEP(zipcode) {
+    cepSchema = {
+      uf: zipcode.cep,
+      city: zipcode.localidade,
+      neighbourhood: zipcode.bairro,
+      street: zipcode.logradouro,
+      complement: zipcode.complemento,
     };
+  }
 
-    const required = /([A-Z])\w+/;
+  function validateCEP() {
+    cepValidations.forEach((validation) => {
+      const Regex = new RegExp(validation.validation);
+      if (!Regex.test(cepSchema[validation.field])) throw new Error(`Campo ${validation.field} inválido`);
+    });
+  }
 
-    const cepValidations = [
-        {field: 'uf', validation: /\d{5}-\d{3}/},
-        {field: 'city', validation: required},
-        {field: 'neighbourhood', validation: required},
-        {field: 'street', validation: required}
-    ];
+  async function createCEP({ zipcode, format }) {
+    const response = await repositories.getAddressByZipcode({ zipcode, format });
+    parseCEP(response);
+    validateCEP();
+    return cepSchema;
+  }
 
-    async function createCEP ({zipcode, format}) {     
-        const response = await repositories.getAddressByZipcode({ zipcode, format});
-        parseCEP(response);
-        validateCEP();
-        return cepSchema;
-    }
-
-    function parseCEP (zipcode) {
-        cepSchema = {
-            uf: zipcode.cep,
-            city: zipcode.localidade,
-            neighbourhood: zipcode.bairro,
-            street: zipcode.logradouro,
-            complement: zipcode.complemento
-        }
-    }
-
-    function validateCEP () {
-        cepValidations.forEach(validation => {
-            const Regex = new RegExp(validation.validation);
-            if (!Regex.test(cepSchema[validation.field])) throw new Error(`Campo ${validation.field} inválido`);
-        })
-    }
-
-    return { createCEP }
+  return { createCEP };
 }
 
 export default libCEP;

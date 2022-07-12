@@ -1,21 +1,20 @@
-import axios from "axios";
+import axios from 'axios';
 import {
-    ErrorZipCodeNotFound
-} from './errors.js';
+  ErrorZipCodeNotFound,
+} from './errors';
 
-const VIACEP_URL = 'https://viacep.com.br/ws'
+const VIACEP_URL = 'https://viacep.com.br/ws';
 
-function libCEP () {
+function libCEP() {
+  async function getAddressByZipcode({ zipcode = '', format = 'json' }) {
+    const { data } = await axios.get(`${VIACEP_URL}/${zipcode}/${format}`);
 
-    async function getAddressByZipcode ({ zipcode = '', format = 'json'}) {
-        const { data } = await axios.get(`${VIACEP_URL}/${zipcode}/${format}`);
+    if (data.erro === 'true') throw new ErrorZipCodeNotFound();
 
-        if (data.erro === "true") throw new ErrorZipCodeNotFound();
+    return data;
+  }
 
-        return data;
-    }
-
-    return { getAddressByZipcode };
+  return { getAddressByZipcode };
 }
 
-export default libCEP
+export default libCEP;
