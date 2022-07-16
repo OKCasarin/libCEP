@@ -1,6 +1,6 @@
-import libCEPRepository from './src/repositories/libCEP';
-import libCEPService from './src/services/libCEP';
-import libCEPHandler from './src/handlers/libCEP';
+import libCEPRepository from './src/repositories/libCEP/index.js';
+import libCEPService from './src/services/libCEP/index.js';
+import libCEPHandler from './src/handlers/libCEP/index.js';
 
 const repository = libCEPRepository();
 const service = libCEPService({ repositories: repository });

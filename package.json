@@ -9,7 +9,9 @@
     "eslint": "eslint ."
   },
   "lint-staged": {
-    "*.js": ["npm run eslint"]
+    "*.js": [
+      "npm run eslint"
+    ]
   },
   "repository": {
     "type": "git",

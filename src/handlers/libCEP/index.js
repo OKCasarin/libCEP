@@ -1,11 +1,18 @@
 import Joi from 'joi';
+
 import {
   ErrorInvalidRequest,
   ErrorDefault,
-} from './errors';
+} from './errors.js';
+
 import {
   ErrorZipCodeNotFound,
-} from '../../repositories/libCEP/errors';
+  ErrorHttpResponse,
+} from '../../repositories/libCEP/errors.js';
+
+import {
+  ErrorResponseValidation,
+} from '../../services/libCEP/errors.js';
 
 function libCEP({ services }) {
   const schema = Joi.object({
@@ -13,7 +20,7 @@ function libCEP({ services }) {
     format: Joi.string(),
   });
 
-  async function getAddressByZipcode(zipcode = '', format = 'json') {
+  async function getAddressByZipcode({ zipcode = '', format = 'json' }) {
     try {
       const { error: validationError } = schema.validate({ zipcode, format });
       if (validationError) throw new ErrorInvalidRequest(validationError.details);
@@ -25,6 +32,10 @@ function libCEP({ services }) {
       if (err instanceof ErrorInvalidRequest) throw err;
 
       if (err instanceof ErrorZipCodeNotFound) throw err;
+
+      if (err instanceof ErrorHttpResponse) throw err;
+
+      if (err instanceof ErrorResponseValidation) throw err;
 
       throw new ErrorDefault();
     }
